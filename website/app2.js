@@ -1,4 +1,6 @@
 /* Global Variables */
+
+const baseUrl = `https://api.openweathermap.org/data/2.5/weather?zip=${zipCode}&appid=${apiKey}`;
 const apiKey = "85809549041cdefbef629f3153fa24b7";
 
 const zipCode = document.getElementById("zip").value;
@@ -13,34 +15,14 @@ let newDate = d.getMonth() + "." + d.getDate() + "." + d.getFullYear();
 
 // API of coordinates by zip/post code
 
-let API_coordinatesByZipcode = `http://api.openweathermap.org/geo/1.0/zip?zip=${zipCode},${country_code}&appid=${apiKey}`;
+let API_weather = `http://api.openweathermap.org/geo/1.0/zip?zip=${zipCode},${country_code}&appid=${apiKey}&units=metric`;
 
 document.getElementById("generate").addEventListener("click", performAction);
 
 async function performAction(e) {
   console.log("calling getCoordinates");
-  const result1 = await getCoordinates(zipCode, apiKey);
-  lat = result1.lat;
-  lon = result1.lon;
-  const result2 = await getWeather(lat, lon, apiKey);
+  const result = await getWeather(zipCode, apiKey);
 }
-
-const getCoordinates = async (zipCode, apiKey) => {
-  const res = await fetch(`${API_coordinatesByZipcode}`);
-
-  try {
-    const data = await res.json();
-    lat = data.lat;
-    lon = data.lon;
-    console.log("Lat:", lat);
-    console.log("Lon:", lon);
-    return data;
-  } catch (error) {
-    console.log("error", error);
-    // appropriately handle the error
-  }
-  console.log(data);
-};
 
 const getWeather = async (lat, lon, apiKey) => {
   console.log("Lat:", lat);
