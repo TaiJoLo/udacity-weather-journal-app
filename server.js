@@ -1,9 +1,5 @@
 // Setup empty JS object to act as endpoint for all routes
-projectData = {
-  temperature: "",
-  date: "",
-  user_response: "",
-};
+projectData = {};
 
 // Require Express to run server and routes
 const express = require("express");
@@ -48,31 +44,22 @@ function callBack(req, res) {
   res.send("POST received");
 }
 
-// POST an animal
-// const data = [];
-const data = [
-  {
-    temperature: "15",
-    date: "10.05.2023",
-    user_response: "wow",
-  },
-  {
-    temperature: "25",
-    date: "01.06.2023",
-    user_response: "yeah",
-  },
-];
+// POST data
+data = [];
+
 app.post("/add", addData);
 
 function addData(request) {
   let newData = request.body;
+
   let newEntry = {
-    temperature: newData.temperature,
+    temp: newData.temp,
     date: newData.date,
-    user_response: newData.user_response,
+    content: newData.content,
   };
   data.push(newEntry);
-  console.log(data);
+  console.log("projectData:", projectData);
+  console.log("data:", data);
 }
 
 addData({
@@ -82,36 +69,3 @@ addData({
     user_response: "amazing!",
   },
 });
-
-// POST
-// const data = [];
-
-// app.post("/projectData", addData);
-
-// function addData(req, res) {
-//   // res.send("Got a POST request");
-//   data.push(req.body);
-// }
-
-// addData({
-//   body: { temperature: "35", date: "12/06/2023", user_response: "wow!" },
-// });
-//----//
-// express.request = {
-//   temperature: "12",
-//   date: "05.06.2023",
-//   user_response: "freezing!",
-// };
-
-// const data = [];
-// app.post("/", addData);
-
-// function addData(request) {
-//   res.send("Got a POST request");
-
-//   data.push(req.body);
-// }
-// addData({
-//   body: { temperature: "35", date: "12/06/2023", user_response: "wow!" },
-// });
-// console.log(data);

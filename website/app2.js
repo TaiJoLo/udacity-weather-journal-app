@@ -1,9 +1,10 @@
 /* Global Variables */
+let zipCode = "";
+let apiKey = "";
 
-const baseUrl = `https://api.openweathermap.org/data/2.5/weather?zip=${zipCode}&appid=${apiKey}`;
-const apiKey = "85809549041cdefbef629f3153fa24b7";
+apiKey = "85809549041cdefbef629f3153fa24b7";
+zipCode = document.getElementById("zip").value;
 
-const zipCode = document.getElementById("zip").value;
 // ISO 3166-1 alpha-2 country codes
 let country_code = "US";
 let lat = 10;
@@ -13,9 +14,21 @@ let lon = 20;
 let d = new Date();
 let newDate = d.getMonth() + "." + d.getDate() + "." + d.getFullYear();
 
+// Return Endpoint Data . GET Route II: Client Side
+const retrieveData = async (url = "") => {
+  const request = await fetch("/all");
+  try {
+    // Transform into JSON
+    const allData = await request.json();
+  } catch (error) {
+    console.log("error", error);
+    // appropriately handle the error
+  }
+};
+
 // API of coordinates by zip/post code
 
-let API_weather = `http://api.openweathermap.org/geo/1.0/zip?zip=${zipCode},${country_code}&appid=${apiKey}&units=metric`;
+let API_weather = `https://api.openweathermap.org/data/2.5/weather?zip=${zipCode}&appid=${apiKey}&units=metric`;
 
 document.getElementById("generate").addEventListener("click", performAction);
 
@@ -24,19 +37,19 @@ async function performAction(e) {
   const result = await getWeather(zipCode, apiKey);
 }
 
-const getWeather = async (lat, lon, apiKey) => {
-  console.log("Lat:", lat);
-  console.log("Lon:", lon);
+const getWeather = async (zipCode, apiKey) => {
+  console.log("zipCode:", zipCode);
+  console.log("apiKey:", apiKey);
+
   // API of getting weather
-  let API_weather = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
   console.log("API_weather:", API_weather);
   const res = await fetch(`${API_weather}`);
   try {
     const data = await res.json();
-
+    console.log(data);
     let temp = data.main.temp;
     console.log("temp:", temp);
-    console.log(data);
+
     return temp;
   } catch (error) {
     console.log("error", error);
