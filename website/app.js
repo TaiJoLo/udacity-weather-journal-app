@@ -1,63 +1,98 @@
 /* Global Variables */
-const apiKey = "85809549041cdefbef629f3153fa24b7";
+let zipCode = "";
+let apiKey = "";
+let temp = "";
+apiKey = "85809549041cdefbef629f3153fa24b7";
+zipCode = document.getElementById("zip").value;
+feelings = document.getElementById("feelings").value;
 
-const zipCode = document.getElementById("zip").value;
 // ISO 3166-1 alpha-2 country codes
 let country_code = "US";
-let lat = 10;
-let lon = 20;
 
 // Create a new date instance dynamically with JS
 let d = new Date();
-let newDate = d.getMonth() + "." + d.getDate() + "." + d.getFullYear();
+let monthNames = "";
+monthNames = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
+let monthDigit = d.getMonth();
+let month = monthNames[monthDigit];
+let newDate = month + "." + d.getDate() + "." + d.getFullYear();
 
 // API of coordinates by zip/post code
 
-let API_coordinatesByZipcode = `http://api.openweathermap.org/geo/1.0/zip?zip=${zipCode},${country_code}&appid=${apiKey}`;
+let API_weather = `https://api.openweathermap.org/data/2.5/weather?zip=${zipCode}&appid=${apiKey}&units=metric`;
 
 document.getElementById("generate").addEventListener("click", performAction);
 
-async function performAction(e) {
-  console.log("calling getCoordinates");
-  const result1 = await getCoordinates(zipCode, apiKey);
-  lat = result1.lat;
-  lon = result1.lon;
-  const result2 = await getWeather(lat, lon, apiKey);
-}
+// async function performAction(e) {
+//   console.log("calling getCoordinates");
+//   const result = await getWeather(zipCode, apiKey);
+// }
 
-const getCoordinates = async (zipCode, apiKey) => {
-  const res = await fetch(`${API_coordinatesByZipcode}`);
-
-  try {
-    const data = await res.json();
-    lat = data.lat;
-    lon = data.lon;
-    console.log("Lat:", lat);
-    console.log("Lon:", lon);
-    return data;
-  } catch (error) {
-    console.log("error", error);
-    // appropriately handle the error
-  }
-  console.log(data);
-};
-
-const getWeather = async (lat, lon, apiKey) => {
-  console.log("Lat:", lat);
-  console.log("Lon:", lon);
+const getWeather = async (zipCode, apiKey) => {
   // API of getting weather
-  let API_weather = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
-  console.log("API_weather:", API_weather);
+
   const res = await fetch(`${API_weather}`);
   try {
     const data = await res.json();
 
     let temp = data.main.temp;
-    console.log("temp:", temp);
-    console.log(data);
-    return temp;
+    return data;
   } catch (error) {
     console.log("error", error);
     // appropriately handle the error
   }
 };
+
+// Async POST
+const postData = async (url = "", data = {}) => {
+  const response = await fetch(url, {
+    method: "POST",
+    credentials: "same-origin",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data), // body data type must match "Content-Type" header
+  });
+
+  try {
+    const newData = await response.json();
+    return newData;
+  } catch (error) {
+    console.log("error", error);
+  }
+};
+
+// Async GET
+const retrieveData = async (url = "") => {
+  const request = await fetch(url);
+  try {
+    // Transform into JSON
+    const allData = await request.json();
+    console.log("allData:", allData);
+    // Write updated data to DOM elements
+    document.getElementById("temp").innerHTML =
+      Math.round(allData[allData.length - 1].temp) + " degrees";
+    document.getElementById("content").innerHTML =
+      allData[allData.length - 1].content;
+    document.getElementById("date").innerHTML =
+      allData[allData.length - 1].date;
+  } catch (error) {
+    console.log("error", error);
+    // appropriately handle the error
+  }
+};
+
+async function performAction(e) {
+  console.log("calling");
+  getWeather(zipCode, apiKey)
+    .then(function (data) {
+      postData("/add", {
+        temp: data.main.temp,
+        date: newDate,
+        content: feelings,
+      });
+    })
+    .then(function (data) {
+      retrieveData("/all");
+    });
+}
