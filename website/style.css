@@ -18,9 +18,9 @@ body {
 .holder {
 }
 
-/* .entry{
-    background: rgba(59, 74, 107, .4);
-} */
+.entry {
+  background: rgba(59, 74, 107, 0.4);
+}
 
 #entryHolder {
 }

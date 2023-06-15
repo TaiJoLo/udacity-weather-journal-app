@@ -30,42 +30,49 @@ function listening() {
   console.log(`running on localhost: ${port}`);
 }
 
+app.get("/messages", (req, res) => {
+  res.send("Hello");
+});
+
 // GET route
 app.get("/all", sendData);
 
 function sendData(request, response) {
-  response.send(projectData);
+  response.send(data);
 }
 
 // POST route
-app.post("/add", callBack);
-
-function callBack(req, res) {
-  res.send("POST received");
-}
-
-// POST data
 data = [];
-
 app.post("/add", addData);
 
-function addData(request) {
-  let newData = request.body;
+function addData(req) {
+  let newData = req.body;
 
   let newEntry = {
     temp: newData.temp,
     date: newData.date,
     content: newData.content,
   };
-  data.push(newEntry);
+  projectData = data.push(newEntry);
+
   console.log("projectData:", projectData);
   console.log("data:", data);
 }
 
 addData({
   body: {
-    temperature: "13",
+    temp: 13,
     date: "06.06.2023",
-    user_response: "amazing!",
+    content: "amazing!",
   },
 });
+
+addData({
+  body: {
+    temp: 14,
+    date: "01.06.2023",
+    content: "www!",
+  },
+});
+
+console.log("projectData:", projectData);
